@@ -1,0 +1,69 @@
+sudo service mysqld start
+
+mysql -u root -pcloudera
+
+show databases;
+
+create database db1;
+
+use db1;
+
+create  table comp(emp_id INT NOT NULL AUTO_INCREMENT,emp_name VARCHAR(100),emp_sal INT,PRIMARY KEY(emp_id));
+
+insert into comp values(1,"pranathi",10000),(2,"supriya",15000),(3,"Harshini",12000);
+
+select * from comp;
+
+
+sqoop import --connect jdbc:mysql://localhost/db1 --username root --password cloudera --table comp --m 1
+
+hadoop fs -ls
+
+hadoop fs -ls comp/
+
+hadoop fs -cat comp/part-m-00000
+
+
+sqoop import --connect jdbc:mysql://localhost/db1 --username root --password cloudera --table comp --m 1 --target-dir queryresult
+
+
+hadoop fs -cat queryresult/part-m-00000
+
+create table employees(id INT NOT NULL AUTO_INCREMENT,name VARCHAR(100),PRIMARY KEY(id));
+
+sqoop export --connect jdbc:mysql://localhost/db1 --username root --password cloudera --table employees --export-dir queryresult/part-m-00000
+
+
+select * from employees;
+
+
+task 2:
+
+hive –f tables-schema.hql
+
+hadoop fs -ls /user/hive/warehouse/
+
+create table empNew(id INT,name VARCHAR);
+
+sqoop export --connect jdbc:mysql://localhost/db1 --username root --password cloudera --table empNew --export-dir /user/hive/warehouse/employees -m 1
+
+
+create table import(id int,name string) row format delimited fields terminated by "," stored as textfile;
+
+sqoop import --connect jdbc:mysql://localhost/db1 --username root --password cloudera --table comp --m 1 --target-dir /user/hive/warehouse/import
+
+
+task3:
+
+create table IBM(date DATE,divident INT);
+
+
+ sqoop export --connect jdbc:mysql://localhost/db1 --username root --password cloudera --table IBM --export-dir /user/hive/warehouse/ibm -m 1
+
+
+analyze table IBM compute statistics;
+
+select date_format(date,'MMM') as month,count(*) from IBM where divident>=0.5 group by date_format(date,'MMM');
+
+select date_format(date,'MMM') as month,count(*) from IBM group by month;
+
