@@ -1,0 +1,45 @@
+solrctl instancedir --generate  /tmp/movies_latest
+
+gedit /tmp/movies/conf/schema.xml
+
+solrctl instancedir --create movies_latest /tmp/movies_latest
+
+solrctl collection --create movies_latest
+
+
+1. name:Blue
+2.name : ?lue
+3.name : "Big House"~2
+4.initial_release_date: [2002-01-01 TO 2004-01-01] 
+5.name:PARK~
+
+
+solrctl instancedir --generate /tmp/Books
+ gedit /tmp/Books/conf/schema.xml
+
+solrctl instancedir --create Books /tmp/Books
+solrctl collection --create Books
+
+1. To get all the Books which are In stock
+inStock: true
+
+2.TO get the cat,price and author of the books under scfi genre
+In q field 
+  
+genre_s:scifi
+In fl field
+cat,price_c,author_s
+
+3.facet
+q
+sequence_i:2
+facet field : inStock 
+
+4.Price range
+price : [5 TO 7](q field)
+
+5.Author Word match
+author:"George"
+
+
+
