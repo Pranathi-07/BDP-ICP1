@@ -36,7 +36,11 @@ CREATE CUSTOM INDEX lastname_test ON emp1 (lastname) USING 'org.apache.cassandra
 
 CREATE FUNCTION IF NOT EXISTS len (input text) CALLED ON NULL INPUT RETURNS int LANGUAGE java AS 'return input.length();';
 
+CREATE FUNCTION IF NOT EXISTS convertName (name text) called on null input returns text language java as 'return name.substring(0, 1).toUpperCase() + name.substring(1);';
+
+select lastname, len(lastname) from emp1 where lastname like 'j%';
  select lastname, len(lastname) from emp1 where lastname like 'G%';
+select lastname, len(lastname) from emp1 where lastname like 's%';
 
 2.
 create table books(book_id int primary key,category text,title text,author text,publisher text,pub_date date,number_pages int);
