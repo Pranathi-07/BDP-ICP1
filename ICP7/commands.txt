@@ -1,0 +1,43 @@
+CREATE KEYSPACE test WITH REPLICATION={'class':'SimpleStrategy','replication_factor':3}
+
+use test;
+
+create table emp1(employee_id int primary key,department text,lastname text,years_with_company int,hiredate date,jobtitle text,salary int,managerid int);
+
+select * from emp1;
+
+copy emp1 (employee_id,department,lastname,years_with_company,hiredate,jobtitle,salary,managerid) from 'C:\Users\gudiy\Downloads\employee_entries.csv' with delimiter='|' and HEADER=true;
+
+select * from emp1;
+
+query1:List the empID,ename,jobtitle,and hiredate of employee from the employee table.
+select employee_id,lastname,jobtitle,hiredate from emp1;
+
+query2:List the name,salary of the employees who are clerks.
+select lastname,salary from emp1 where jobtitle='clerk' allow filtering;
+
+query3:List the name,job,salary of every employee joined on ‘february18,2000’
+select lastname,jobtitle,salary from emp1 where hiredate='2000-02-18' allow filtering;
+
+query4:List name and annual salary of all the employees.
+CREATE FUNCTION IF NOT EXISTS calculateAnnual (input int) CALLED ON NULL INPUT RETURNS int LANGUAGE java AS 'return Integer.valueOf(input.intValue() * 12)';
+
+select lastname, calculateAnnual(salary) as AnnualSalary from emp1;
+
+
+query5:Display employees’ names, salary and manager values of those employees whose salary is 45000 from EMP table using SELECT statement.
+select lastname,salary,managerid from emp1 where salary=45000 allow filtering;
+
+
+bonus:
+
+1.
+CREATE CUSTOM INDEX lastname_test ON emp1 (lastname) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS = {'mode': 'PREFIX', 'analyzer_class': 'org.apache.cassandra.index.sasi.analyzer.StandardAnalyzer', 'case_sensitive': 'false'};
+
+CREATE FUNCTION IF NOT EXISTS len (input text) CALLED ON NULL INPUT RETURNS int LANGUAGE java AS 'return input.length();';
+
+ select lastname, len(lastname) from emp1 where lastname like 'G%';
+
+2.
+create table books(book_id int primary key,category text,title text,author text,publisher text,pub_date date,number_pages int);
+copy courses(book_id,category,title,author,publisher,pub_date,number_pages) from 'C:\Users\gudiy\Downloads\books_entries.csv' with delimiter='|' and HEADER=true;
