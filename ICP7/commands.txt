@@ -40,4 +40,15 @@ CREATE FUNCTION IF NOT EXISTS len (input text) CALLED ON NULL INPUT RETURNS int 
 
 2.
 create table books(book_id int primary key,category text,title text,author text,publisher text,pub_date date,number_pages int);
-copy courses(book_id,category,title,author,publisher,pub_date,number_pages) from 'C:\Users\gudiy\Downloads\books_entries.csv' with delimiter='|' and HEADER=true;
+copy books(book_id,category,title,author,publisher,pub_date,number_pages) from 'C:\Users\gudiy\Downloads\book_entries.csv' with delimiter='|' and HEADER=true;
+select * from books;
+
+---details of books under mystery
+select book_id,number_pages,title from books where category='mystery' allow filtering;
+
+---Books more than 500 pages
+select * from books where number_pages>500 allow filtering;
+
+----authos whose names starts with D
+select title,category from books where author like 'D%' allow filtering;
+
